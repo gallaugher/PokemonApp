@@ -17,23 +17,41 @@ class Pokemon {
         var url = ""
     }
     
+    var numberOfPokemon = 0
     var pokeArray = [PokeData]()
+    
+    // ?limit=20
     
     func getPokemon(completed: @escaping () -> () ) {
         let pokeURL = "https://pokeapi.co/api/v2/pokemon/"
         Alamofire.request(pokeURL).responseJSON { response in
             switch response.result {
             case .success(let value):
-                print(value)
+                let json = JSON(value)
+                self.numberOfPokemon = json["count"].intValue
+            case .failure(let error):
+                print("Oh no! There was an error accessing the JSON! Error code: \(error)")
+            }
+             completed()
+        }
+    }
+    
+    func getAllPokemon(completed: @escaping () -> () ) {
+        let fullURL = "https://pokeapi.co/api/v2/pokemon/?limit=\(numberOfPokemon)"
+        Alamofire.request(fullURL).responseJSON { response in
+            print("FULL URL = " + fullURL)
+            switch response.result {
+            case .success(let value):
+                print("VALUE = \(value)")
                 let json = JSON(value)
                 for index in 0...json["results"].count-1 {
                     let name = json["results"][index]["name"].stringValue
                     let url = json["results"][index]["url"].stringValue
-                    print(name, url)
-                    self.pokeArray.append(PokeData(name: name, url: url))
+                    self.pokeArray.append(PokeData(name: name.capitalized, url: url))
                 }
-                print(self.pokeArray)
-                
+                for i in 0..<self.pokeArray.count {
+                    print(self.pokeArray[i].name)
+                }
             case .failure(let error):
                 print("Oh no! There was an error accessing the JSON! Error code: \(error)")
             }

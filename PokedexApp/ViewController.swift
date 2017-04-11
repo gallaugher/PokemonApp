@@ -11,12 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
-    
-//    var pokeArray = ["bulbasaur",
-//                     "pikachu",
-//                     "snorlax",
-//                     "squirtle"]
-    
+
     var pokemon = Pokemon()
 
     override func viewDidLoad() {
@@ -24,8 +19,18 @@ class ViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
+        // Not the most elegent way, but this uses code techniques we learned
+        // The first call to getPokemon sets a new property in Pokemon.swift
+        // called numberOfPokemon.
+        // Once we have the numberOfPokemon (likely 811), we call getAllPokemon
+        // which works like the prior call, but changes the URL to add an offset
+        // parameter mentioned in the API, so the new URL is something like this:
+        // https://pokeapi.co/api/v2/pokemon/?offset=811
+        // and it will return all 811 pokemon.
         pokemon.getPokemon {
-            self.tableView.reloadData()
+            self.pokemon.getAllPokemon {
+                self.tableView.reloadData()
+            }
         }
     }
     
