@@ -39,6 +39,7 @@ class ViewController: UIViewController {
         let selectedIndex = tableView.indexPathForSelectedRow!
         destination.name = pokemon.pokeArray[selectedIndex.row].name
         destination.url = pokemon.pokeArray[selectedIndex.row].url
+        tableView.deselectRow(at: tableView.indexPathForSelectedRow!, animated: true)
     }
 }
 
